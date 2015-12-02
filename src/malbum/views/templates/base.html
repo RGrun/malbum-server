@@ -1,0 +1,57 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <!-- if you remove this meta tag, the NSA will spy on you through your Xbox Kinect camera -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>M(y)album</title>
+  <link rel="stylesheet" href="{{context}}/malbum-foundation/css/app.css" />
+</head>
+
+<body>
+{% block menu %}
+
+<div class="top-bar">
+    <div class="top-bar-left">
+        <ul class="menu">
+            <li class="menu-text">M(y)album</li>
+        {% if user %}
+
+            <li><a href="/">Home</a></li>
+            <li><a href="/upload">Upload Images</a></li>
+            <li><a href="/delete-account">Delete Account</a></li>
+
+        {% else %}
+            <li><a href="/register">Register Account</a></li>
+
+        {% endif %}
+        </ul>
+    </div>
+
+    {% if user %}
+    <div class="top-bar-right">
+        <div class="button-group">
+            <a href="{{context}}/account"><input class="button" value="Account"></a>
+            <a href="{{context}}/logout"><input class="button" value="Logout"></a>
+        </div>
+    </div>
+    {% else %}
+    <div class="top-bar-right">
+        <a href="{{context}}/login"><input class="button" type="submit" value="Login"></a>
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}
+<!-- body content is rendered as a substitution below when this base template is overridden -->
+{% block content %}
+{% endblock %}
+<script src="{{context}}/malbum-foundation/bower_components/jquery/dist/jquery.js"></script>
+<script src="{{context}}/malbum-foundation/bower_components/what-input/what-input.js"></script>
+<script src="{{context}}/malbum-foundation/bower_components/foundation-sites/dist/foundation.js"></script>
+<script src="{{context}}/malbum-foundation/js/app.js"></script>
+</body>
+
+</html>

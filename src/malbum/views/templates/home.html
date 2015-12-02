@@ -1,0 +1,39 @@
+{% extends "malbum/views/templates/base.html" %}
+{% block content %}
+
+<div class="row">
+    <div class="small-12 small-centered columns ">
+
+        {% if not user %}
+        <h2>Welcome to M(y)album!</h2>
+        {% else %}
+        <h2>Welcome to M(y)album, {{user.uname}}!</h2>
+        {% endif %}
+
+    </div>
+</div>
+
+<!-- gallery samples start here -->
+{% if galleries %}
+
+{% for galrow in galleries %}
+
+<div class="row small-up-1 medium-up-2 large-up-4">
+
+    {% for row in galrow.galrow %}
+        <div class="column">
+            <a href="{{context}}/album/{{row.row.uname}}">
+                <img class="thumbnail" src="{{context}}/img/{{row.row.uname}}/{{row.row.thumb_name}}"> <br/>
+            </a>
+            <h6>{{row.row.uname}}</h6>
+        </div>
+
+    {% endfor %}
+
+</div>
+{% endfor %}
+
+{% endif %}
+<!-- end gallery samples -->
+
+{% endblock %}

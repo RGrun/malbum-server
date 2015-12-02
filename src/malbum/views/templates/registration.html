@@ -1,0 +1,66 @@
+{% extends "malbum/views/templates/base.html" %}
+{% block content %}
+
+    {% if errors %}
+    <div class="row">
+        <div class="callout alert">
+            <ul>
+                {% for error in errors %}
+                <li>{{error}}</li>
+               {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    {% endif %}
+
+    <div class="row">
+        <h4>Please enter your account details:</h4>
+    </div>
+
+    <form action="{{context}}/register" method="POST">
+        <div class="row">
+            <div class="small-4 columns small-pull-8">
+                <label>
+                    Username <input type="text" name="uname" tabindex="1" />
+                </label>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="small-4 columns">
+                <label>
+                    Password <input type="password" name="pwd" tabindex="2" />
+                </label>
+            </div>
+            <div class="small-4 columns small-pull-4">
+                <label>
+                    Retype Password <input type="password" name="pwd1" tabindex="3" />
+                </label>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="small-4 columns">
+                <label>
+                    First Name <input type="text" name="fname" tabindex="4" />
+                </label>
+            </div>
+            <div class="small-4 columns small-pull-4">
+                <label>
+                    Last Name <input type="text" name="lname" tabindex="5" />
+                </label>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <input class="button" type="submit" value="Register Account" />
+        </div>
+
+
+    </form>
+
+
+
+{% endblock %}
