@@ -6,7 +6,6 @@ FIXME
 
 You will need [Leiningen][1] 1.7.0 or above installed.
 
-
 You'll also need to install [Foundation 6][2]'s build tool and run
 `foundation watch` to compile the scss before running the server.
 
