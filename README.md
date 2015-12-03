@@ -1,6 +1,11 @@
 # malbum-server
 
-FIXME
+## TODO:
+
+* Add "Description" column to photos table
+* Allow description to be entered during photo upload
+
+* Implement delete image feature
 
 ## Prerequisites
 

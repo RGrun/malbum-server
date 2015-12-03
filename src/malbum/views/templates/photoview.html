@@ -1,0 +1,73 @@
+{% extends "malbum/views/templates/base.html" %}
+{% block content %}
+<div class="album">
+    <div id="errors">
+        <ul>
+
+        </ul>
+    </div>
+
+    <div class="row">
+        <div class="small-12 small-centered columns">
+
+            <img class="photoview-image" src="{{context}}/img/{{page-user}}/{{picture.name}}" />
+
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="small-12 small-centered columns">
+           <div id="full-image-link"><a href="{{context}}/img/{{page-user}}/{{picture.name}}">View Full Image</a></div>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="small-12 small-centered columns">
+            <div class="photoview-table">
+                <table class="hover">
+                    <thead>
+                        <tr>
+                            <th>Image Name</th>
+                            <th>Uploaded On</th>
+                            <th>Uploaded By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{picture.name}}</td>
+                            <td>{{picture.upload-date}}</td>
+                            <td>{{page-user}}</td>
+                        </tr>
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+            <!--<a class={{pic.name}} href="{{context}}/img/{{pic.uname}}/{{pic.name}}">
+                <img class="thumbnail" src="{{context}}/img/{{pic.uname}}/{{thumb-prefix}}{{pic.name}}"/>
+            </a>
+
+            {% ifequal user.uname page-owner %}
+            <br/>
+            <input id="{{pic.name}}"
+                   name="{{pic.name}}"
+                   type="checkbox"
+                   value="true" />
+            {% endifequal %}-->
+
+
+   <!-- {% ifequal user.uname page-owner %}
+    <div class="row">
+        <input class="button" id="delete" type="submit" value="Delete Images" />
+    </div>
+    {% endifequal %}-->
+</div>
+{% endblock %}

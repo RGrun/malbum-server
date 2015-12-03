@@ -3,7 +3,6 @@
 
 <head>
   <meta charset="utf-8" />
-  <!-- if you remove this meta tag, the NSA will spy on you through your Xbox Kinect camera -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>M(y)album</title>
   <link rel="stylesheet" href="{{context}}/malbum-foundation/css/app.css" />
@@ -15,7 +14,7 @@
 <div class="top-bar">
     <div class="top-bar-left">
         <ul class="menu">
-            <li class="menu-text">M(y)album</li>
+            <li class="menu-text"><a href="/">M(y)album</a></li>
         {% if user %}
 
             <li><a href="/">Home</a></li>
@@ -48,10 +47,15 @@
 <!-- body content is rendered as a substitution below when this base template is overridden -->
 {% block content %}
 {% endblock %}
+
+<!-- foundation includes -->
 <script src="{{context}}/malbum-foundation/bower_components/jquery/dist/jquery.js"></script>
 <script src="{{context}}/malbum-foundation/bower_components/what-input/what-input.js"></script>
 <script src="{{context}}/malbum-foundation/bower_components/foundation-sites/dist/foundation.js"></script>
 <script src="{{context}}/malbum-foundation/js/app.js"></script>
+<!-- ClojureScript includes -->
+{% block scripts %}
+{% endblock %}
 </body>
 
 </html>

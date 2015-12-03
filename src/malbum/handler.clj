@@ -9,6 +9,7 @@
             [malbum.routes.auth :refer [auth-routes]]
             [malbum.routes.upload :refer [upload-routes]]
             [malbum.routes.album :refer [album-routes]]
+            [malbum.routes.photoview :refer [photoview-routes]]
             [noir.session :as session]
             [noir.util.middleware :as noir-middleware]
             ))
@@ -31,6 +32,7 @@
              home-routes   ;; home-page rendering routes
              upload-routes ;; file-upload routes
              album-routes ;; user album routes
+             photoview-routes ;; single image display route
              app-routes]
             :access-rules [user-page])) ;; lib-noir checks to see if user is logged in
 

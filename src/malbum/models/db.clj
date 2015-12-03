@@ -61,6 +61,12 @@
     (for [photo photos]
       (assoc photo :uname proper-uname))))
 
+;; should only return one image
+(defn get-image-by-name [image-name]
+  (with-db
+    sql/with-query-results
+    res ["select * from photos WHERE name = ?" image-name] (first (doall res))))
+
 ;; grab the first image from each user's gallery to use as a preview
 (defn get-gallery-previews []
   (with-db

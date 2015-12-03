@@ -1,6 +1,6 @@
 (defproject malbum "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+  :description "A private photo-sharing web app."
+  :url "https://github.com/RGrun/malbum-server"
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [compojure "1.1.6"]
                  [hiccup "1.0.5"]
@@ -13,8 +13,21 @@
                  [prone "0.8.2"] ;; WAAAAY better error reporting
                  [selmer "0.5.4"] ;; HTML templating using template files
                  [clj-time "0.11.0"]
+                 [org.clojure/tools.reader "0.7.10"] ;; clojurescript
+                 [org.clojure/clojurescript "0.0-1806"]
+
+                 ;; clojurescript dependancies
+                 [domina "1.0.0"]
+                 [cljs-ajax "0.2.0"]
                  ]
-  :plugins [[lein-ring "0.8.12"]]
+  :plugins [[lein-ring "0.8.12"]
+            [lein-cljsbuild "0.3.2"]]
+  :cljsbuild
+  {:builds
+   [{:source-paths ["src-cljs"]
+     :compiler
+     {:pretty-print false
+      :output-to "resources/public/js/album-cljs.js"}}]}
   :ring {:handler malbum.handler/app
          :init malbum.handler/init
          :destroy malbum.handler/destroy}
