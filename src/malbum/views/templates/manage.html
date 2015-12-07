@@ -1,0 +1,54 @@
+{% extends "malbum/views/templates/base.html" %}
+{% block content %}
+{% if errors %}
+<div class="row">
+    <div class="callout alert">
+        <ul>
+            <li>{{errors}}</li>
+        </ul>
+    </div>
+</div>
+{% endif %}
+
+<div class="row">
+    <div class="small-12 small-centered columns">
+        <h4>Managing {{user.uname}}'s photos.</h4>
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="small-12 small-centered columns">
+        <table class="management-table">
+            <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Upload Date</th>
+                <th>Delete?</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for photo in photos %}
+                <tr>
+                    <td><img class="photo-management-image"
+                             src="{{context}}/img/{{photo.uname}}/{{photo.thumb_name}}"/></td>
+                    <td>{{photo.name}}</td>
+                    <td>{{photo.upload_date}}</td>
+                    <td><input type="checkbox"
+                               id="{{photo.name}}"
+                               name="{{photo.name}}" /></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row">
+    <div class="small-12 small-centered columns">
+        <input class="button" id="delete" type="button" value="Delete selected images" />
+    </div>
+</div>
+
+{% endblock %}

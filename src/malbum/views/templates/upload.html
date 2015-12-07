@@ -22,10 +22,18 @@
         <form action="{{context}}/upload"
               enctype="multipart/form-data"
               method="POST">
+            <label>
+                Rename file (optional):
+                <input type="text" name="custom_name" />
+            </label>
             <input
                    id="file"
                    name="file"
                    type="file" />
+            <label>
+                Enter photo description (optional):
+                <textarea name="description"></textarea>
+            </label>
             <input class="button" type="submit" value="Upload!" />
         </form>
     </div>

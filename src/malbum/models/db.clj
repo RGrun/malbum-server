@@ -31,7 +31,7 @@
     ((first (doall res)) :uname)))
 
 ;; saves image metadata in database
-(defn add-image [userid path name]
+(defn add-image [userid path name custom-name desription]
   (with-db
     sql/transaction
     (if (sql/with-query-results
@@ -41,10 +41,12 @@
       (sql/insert-record :photos {:user_id userid
                                   :photo_path (str path File/separator name)
                                   :thumb_name (str "thumb_" name)
+                                  :description (if (>= (count desription) 1) desription "No comment.")
                                   :upload_date (to-sql-time (now))
                                   :modified_date (to-sql-time (now))
                                   :deleted false
-                                  :name name})
+                                  :name name
+                                  :custom_name (if (>= (count custom-name) 1) custom-name name) })
       (throw
         (Exception. "You've already uploaded an image with the same name!")))))
 
@@ -85,4 +87,23 @@
 (defn delete-user [userid]
   (with-db sql/delete-rows :users ["user_id=?" userid]))
 
+(defn add-comment
+  "Add a comment to the database."
+  [comment user-id photo-id]
+  (when (not (clojure.string/blank? comment))  ;; don't post blank comments
+    (with-db
+      sql/transaction
+      (sql/insert-record :comments { :photo_id (read-string photo-id)
+                                     :user_id user-id   ;; user-id of -1 indicates anonymous comment
+                                     :comment comment
+                                     :date (to-sql-time (now)) }))))
+
+(defn get-comments-for-photo
+  "Returns a seq of all comments for a photo."
+  [photo-id]
+  (with-db
+    sql/with-query-results
+    res
+    ["select * from comments where deleted = false and photo_id = ?" photo-id]
+    (doall res)))
 

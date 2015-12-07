@@ -17,14 +17,24 @@
     </div>
 
     <div class="row">
-        <div class="small-12 small-centered columns">
+        <div class="small-12 small-centered  columns">
            <div id="full-image-link"><a href="{{context}}/img/{{page-user}}/{{picture.name}}">View Full Image</a></div>
         </div>
     </div>
 
     <div class="row">
+        <div class="small-12 small-centered  columns">
+            <div id="photoview-description">
+                <h5>About this photo: </h5> <br/>
+                <p>{{picture.description}}</p>
+            </div>
+        </div>
+    </div>
 
-        <div class="small-12 small-centered columns">
+
+    <div class="row">
+
+        <div class="small-12 small-centered large-6 columns">
             <div class="photoview-table">
                 <table class="hover">
                     <thead>
@@ -36,7 +46,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{picture.name}}</td>
+                            <td>{{picture.custom_name}}</td>
                             <td>{{picture.upload-date}}</td>
                             <td>{{page-user}}</td>
                         </tr>
@@ -48,26 +58,36 @@
 
     </div>
 
-
-
-
-            <!--<a class={{pic.name}} href="{{context}}/img/{{pic.uname}}/{{pic.name}}">
-                <img class="thumbnail" src="{{context}}/img/{{pic.uname}}/{{thumb-prefix}}{{pic.name}}"/>
-            </a>
-
-            {% ifequal user.uname page-owner %}
-            <br/>
-            <input id="{{pic.name}}"
-                   name="{{pic.name}}"
-                   type="checkbox"
-                   value="true" />
-            {% endifequal %}-->
-
-
-   <!-- {% ifequal user.uname page-owner %}
+    <!-- comment posting form -->
     <div class="row">
-        <input class="button" id="delete" type="submit" value="Delete Images" />
+        <div class="small-6 small-centered columns">
+            <h5>Add comment:</h5> <br/>
+            <!-- TODO: hook these up with a clojurescript ajax call -->
+            <textarea name="new_comment"></textarea>
+            <input type="hidden" name="photo_id" value="{{picture.photo_id}}" />
+            <input class="button" type="submit" value="Post Comment" />
+        </div>
     </div>
-    {% endifequal %}-->
+
+    <!--comments-->
+    <div class="row">
+        <div class="small-6 small-centered columns">
+
+            <h4>Comments for this photo: </h4> <br/>
+
+            {% for cmt in comments %}
+
+            <div class="comment">
+                <h5>{{cmt.uname}}</h5>
+                <p>{{cmt.comment}}</p>
+                <p>{{cmt.date}}</p>
+            </div>
+
+            {% endfor %}
+
+
+        </div>
+
+    </div>
 </div>
 {% endblock %}

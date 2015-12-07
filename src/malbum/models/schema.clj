@@ -63,6 +63,8 @@
       [:photo_id "serial PRIMARY KEY"]
       [:user_id "int NOT NULL REFERENCES users (user_id) ON DELETE CASCADE"]
       [:name "text NOT NULL"]
+      [:custom_name "text"]
+      [:description "text DEFAULT 'No comment.'"]
       [:thumb_name "text NOT NULL"]
       [:photo_path "text NOT NULL"]
       [:upload_date "timestamptz NOT NULL"]

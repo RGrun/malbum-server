@@ -47,9 +47,10 @@
   (println params)
   (layout/render "upload.html" params))
 
-(defn handle-upload [{:keys [filename] :as file}]
-  (let [filename-escaped (clojure.string/replace filename #" " "_")]
-    (println file)
+(defn handle-upload [custom-name {:keys [filename] :as file} description]
+  (let [ custom-name (if (>= (count custom-name) 1) custom-name filename)
+         filename-escaped (clojure.string/replace filename #" " "_")]
+    (println custom-name ", " description)
     (upload-page
       (if (empty? filename)
         {:errors "Please select a file to upload."}
@@ -59,7 +60,7 @@
             (println (str (album-path) File/separator filename-escaped))
             (upload-file (album-path) (assoc file :filename filename-escaped))
             (save-thumbnail (assoc file :filename filename-escaped))
-            (db/add-image ((session/get :user) :user_id) (album-path) filename-escaped)
+            (db/add-image ((session/get :user) :user_id) (album-path) filename-escaped custom-name description)
             {:image (thumb-uri ((session/get :user) :uname) filename-escaped)}
             (catch Exception ex
               ;(error ex "an error has occured while uploading" name)
@@ -76,7 +77,7 @@
   (GET "/img/:uname/:file-name" [uname file-name]
     (serve-file uname file-name))
   (GET "/upload" [info] (restricted (upload-page {:info info})))
-  (POST "/upload" [file] (restricted (handle-upload file)))
+  (POST "/upload" [custom_name file description] (restricted (handle-upload custom_name file description)))
   ;(POST "/delete" [names] (restricted (delete-images names)))
 
   ;; api call to send local file to server with curl:
