@@ -41,7 +41,7 @@
   "Validates login data"
   [uname pwd]
   (let [errors '()
-        user-map (db/get-user uname)]
+        user-map (db/user-by-name uname)]
     (cond->> errors
       (nil? user-map) (cons "There is no registered user with that name.")
       (and (not (nil? user-map)) (not (crypt/compare pwd (:pass user-map)))) (cons "Password is invalid, try again."))))
@@ -81,7 +81,7 @@
                          :lname lname
                          :pass (crypt/encrypt pwd)
                          :api_key "PLACEHOLDER" })
-        (session/put! :user (db/get-user uname)) ;; add user to session
+        (session/put! :user (db/user-by-name uname)) ;; add user to session
         (create-album-path)   ;; create directory in album folder for new user
         (resp/redirect "/")     ;; redirect to index
         (catch Exception ex
@@ -102,7 +102,7 @@
 (defn handle-login [uname pwd]
   (let [errors (check-login-data uname pwd)]
     (if (empty? errors)
-      (let [user (db/get-user uname)]
+      (let [user (db/user-by-name uname)]
         (session/put! :user user)
         (resp/redirect "/"))
       (login-page errors))))

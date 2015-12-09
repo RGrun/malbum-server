@@ -14,7 +14,7 @@
         comments  (for [cmt  (db/get-comments-for-photo (pic-data :photo_id))]
                     (let [ user-id (cmt :user_id)]
                       (if (not (= (- 1) user-id))
-                        (assoc cmt :uname (db/username-by-id user-id)) ;; assoc username of comment poster
+                        (assoc cmt :uname (db/user-by-id user-id)) ;; assoc username of comment poster
                         (assoc cmt :uname "Anonymous"))))]
     (layout/render "photoview.html"
       { :page-user uname

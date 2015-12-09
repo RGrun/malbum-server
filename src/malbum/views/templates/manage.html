@@ -1,18 +1,24 @@
 {% extends "malbum/views/templates/base.html" %}
 {% block content %}
-{% if errors %}
 <div class="row">
-    <div class="callout alert">
-        <ul>
+    <div id="manage-errors-wrapper" class="callout alert" style="display: none;">
+        <ul id="manage-errors">
             <li>{{errors}}</li>
         </ul>
     </div>
 </div>
-{% endif %}
+
+<div class="row">
+    <div id="manage-success-wrapper" class="callout success" style="display: none;">
+        <ul id="manage-success">
+
+        </ul>
+    </div>
+</div>
 
 <div class="row">
     <div class="small-12 small-centered columns">
-        <h4>Managing {{user.uname}}'s photos.</h4>
+        <h4 id="management-header">Managing {{user.uname}}'s photos.</h4>
     </div>
 
 </div>
@@ -24,15 +30,17 @@
             <tr>
                 <th>Image</th>
                 <th>Name</th>
+                <th>File Name</th>
                 <th>Upload Date</th>
                 <th>Delete?</th>
             </tr>
             </thead>
             <tbody>
                 {% for photo in photos %}
-                <tr>
+                <tr id="row-{{photo.name}}">
                     <td><img class="photo-management-image"
                              src="{{context}}/img/{{photo.uname}}/{{photo.thumb_name}}"/></td>
+                    <td>{{photo.custom_name}}</td>
                     <td>{{photo.name}}</td>
                     <td>{{photo.upload_date}}</td>
                     <td><input type="checkbox"
@@ -51,4 +59,8 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+<script src="{{context}}/js/manage-delete.js"></script>
 {% endblock %}

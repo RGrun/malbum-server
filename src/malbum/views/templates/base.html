@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>M(y)album</title>
   <link rel="stylesheet" href="{{context}}/malbum-foundation/css/app.css" />
+
 </head>
 
 <body>
@@ -19,7 +20,9 @@
 
             <li><a href="/">Home</a></li>
             <li><a href="/upload">Upload Images</a></li>
+            <li><a href="/all-albums">Browse Albums</a></li>
         {% else %}
+            <li><a href="/all-albums">Browse Albums</a></li>
             <li><a href="/register">Register Account</a></li>
 
         {% endif %}
@@ -51,7 +54,7 @@
 <script src="{{context}}/malbum-foundation/bower_components/what-input/what-input.js"></script>
 <script src="{{context}}/malbum-foundation/bower_components/foundation-sites/dist/foundation.js"></script>
 <script src="{{context}}/malbum-foundation/js/app.js"></script>
-<!-- ClojureScript includes -->
+<!-- Custom script includes -->
 {% block scripts %}
 {% endblock %}
 </body>

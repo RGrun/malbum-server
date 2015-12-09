@@ -4,9 +4,10 @@
             [malbum.models.db :as db]
             [malbum.views.layout :as layout]))
 
+;; TODO: turn the home page into a "latest images descending" page
 
 (defn fetch-previews []
-  (let [previews (db/get-gallery-previews)
+  (let [previews (db/get-album-previews)
         rows (partition-all 4 previews)
         rows-construct (for [x rows]
                          { :galrow (for [y x]

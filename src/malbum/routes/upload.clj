@@ -70,6 +70,23 @@
 (defn serve-file [uname file-name]
   (file-response (str albums File/separator uname File/separator file-name)))
 
+;; delete images in database
+(defn delete-image [uname pname]
+  (try
+    (db/delete-image uname pname)
+    (io/delete-file (str (album-path) File/separator pname))
+    (io/delete-file (str (album-path) File/separator thumb-prefix pname))
+    "ok"
+    (catch Exception ex
+      ;(error ex "Error occurred while deleting: " name)
+      (.getMessage ex))))
+
+
+;; plural version of delete-images
+(defn delete-images [names]
+  (let [uname ((session/get :user) :uname)]
+    (resp/json
+      (for [pname names] {:name pname :status (delete-image uname pname)})))) ;; return JSON responses
 
 
 ;; routes for handler.clj
@@ -78,7 +95,7 @@
     (serve-file uname file-name))
   (GET "/upload" [info] (restricted (upload-page {:info info})))
   (POST "/upload" [custom_name file description] (restricted (handle-upload custom_name file description)))
-  ;(POST "/delete" [names] (restricted (delete-images names)))
+  (POST "/delete" [names] (restricted (delete-images names)))
 
   ;; api call to send local file to server with curl:
   ;; curl -F "user=apiuser" -F "file=@/home/richard/img/pikachu_kite.jpg" localhost:3000/api/upload

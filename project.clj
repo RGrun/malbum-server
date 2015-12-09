@@ -6,7 +6,7 @@
                  [hiccup "1.0.5"]
                  [ring-server "0.3.1"]
                  [postgresql/postgresql "9.1-901.jdbc4"] ;; postgres driver
-                 [org.clojure/java.jdbc "0.2.3"] ;; database connections
+                 [korma "0.4.2"]                ;; SQL DSL
                  [lib-noir "0.7.6"]             ;; sessions, cookies, etc
                  [com.taoensso/timbre "2.6.1"]  ;; logging
                  [com.postspectacular/rotor"0.1.0"] ;; logging

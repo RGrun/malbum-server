@@ -1,5 +1,6 @@
 (ns malbum.models.db
-  (:require [clojure.java.jdbc :as sql]
+  (:require [korma.core :as sql]
+            [korma.db :refer [defdb transaction]]
             [clj-time.coerce :refer [to-sql-time]])
 
   (:import [java.io File FileInputStream FileOutputStream]
@@ -11,53 +12,81 @@
    :user "admin"
    :password "admin"})
 
+(defdb korma-db db)
+
+(sql/defentity comments)
+(sql/defentity photos)
+(sql/defentity role_rules)
+(sql/defentity roles)
+(sql/defentity rules)
+(sql/defentity settings)
+(sql/defentity user_roles)
+(sql/defentity users)
+(sql/defentity users_allowed_upload)
+
 (defn now [] (new java.util.Date))
 
-(defmacro with-db [f & body]
-  `(sql/with-connection ~db (~f ~@body)))
-
 (defn create-user [new-user]
-  (with-db sql/insert-record :users new-user))
+  (sql/insert users (sql/values new-user)))
 
-(defn get-user [uname]
-  (with-db sql/with-query-results
-    res ["select * from users where uname_lower = ?" (clojure.string/lower-case uname)] (first res)))
 
-(defn username-by-id [userid]
-  (with-db
-    sql/with-query-results
-    res
-    ["select uname from users where user_id = ?" userid]
-    ((first (doall res)) :uname)))
+(defn user-by-name
+  "User by username."
+  [uname]
+  (first (sql/select users
+               (sql/where {:uname_lower (clojure.string/lower-case uname)})
+               (sql/limit 1))))
+
+(defn user-by-id
+  "User by user id"
+  [userid]
+  (first (sql/select users
+               (sql/where {:user_id  userid})
+               (sql/limit 1))))
+
+(defn username-by-id
+  "Helper shortcut method."
+  [userid]
+  (:uname (first (sql/select users
+           (sql/where {:user_id userid})
+           (sql/limit 1)))))
+
+(defn id-by-username
+  "Helper shortcut method."
+  [uname]
+  (:user_id (first (sql/select users
+                   (sql/where {:uname_lower (clojure.string/lower-case uname)})
+                   (sql/limit 1)))))
 
 ;; saves image metadata in database
-(defn add-image [userid path name custom-name desription]
-  (with-db
-    sql/transaction
-    (if (sql/with-query-results
-          res
-          ["select user_id from photos where user_id = ? and name = ?" userid name]
-          (empty? res))
-      (sql/insert-record :photos {:user_id userid
-                                  :photo_path (str path File/separator name)
-                                  :thumb_name (str "thumb_" name)
-                                  :description (if (>= (count desription) 1) desription "No comment.")
-                                  :upload_date (to-sql-time (now))
-                                  :modified_date (to-sql-time (now))
-                                  :deleted false
-                                  :name name
-                                  :custom_name (if (>= (count custom-name) 1) custom-name name) })
+(defn add-image
+  "Add image to database."
+  [userid path name custom-name desription]
+  (transaction
+    (if (empty? (sql/select photos
+                  (sql/where {:user_id userid :name name})
+                  (sql/limit 1)))
+      (sql/insert photos (sql/values
+                           {:user_id userid
+                            :photo_path (str path File/separator name)
+                            :thumb_name (str "thumb_" name)
+                            :description (if (>= (count desription) 1) desription "No comment.")
+                            :upload_date (to-sql-time (now))
+                            :modified_date (to-sql-time (now))
+                            :deleted false
+                            :name name
+                            :custom_name (if (>= (count custom-name) 1) custom-name name) }))
       (throw
         (Exception. "You've already uploaded an image with the same name!")))))
 
 ;; grabs all images by one user
 (defn images-by-user-id [userid]
-  (with-db
-    sql/with-query-results
-    res ["select * from photos WHERE user_id = ? AND deleted = false" userid] (doall res)))
+  (sql/select photos (sql/where {:user_id userid :deleted false })
+                     (sql/order :upload_date :desc)))
+
 
 (defn images-by-user-name [uname]
-  (let [userid ((get-user (clojure.string/lower-case uname)) :user_id)
+  (let [userid ((user-by-name (clojure.string/lower-case uname)) :user_id)
         proper-uname (username-by-id userid)
         photos (images-by-user-id userid)]
     (for [photo photos]
@@ -65,45 +94,44 @@
 
 ;; should only return one image
 (defn get-image-by-name [image-name]
-  (with-db
-    sql/with-query-results
-    res ["select * from photos WHERE name = ?" image-name] (first (doall res))))
+  (first
+    (sql/select photos
+      (sql/where {:name image-name}))))
 
+;; TODO: make function query return last row instead of first
 ;; grab the first image from each user's gallery to use as a preview
-(defn get-gallery-previews []
-  (with-db
-    sql/with-query-results
-    res
+(defn get-album-previews []
+  (sql/exec-raw
     ["select * from
-    (select user_id, thumb_name, row_number() over (partition by user_id) as row_number from photos)
-    as rows where row_number = 1"]
-    (doall res)))
+      (select *, row_number() over (partition by user_id) as row_number from photos)
+      as rows where row_number = 1 and deleted = false" []]
+    :results))
 
 
-(defn delete-image [userid name]
-  (with-db
-    sql/delete-rows :photos ["user_id=? and name=?" userid name]))
+
+;; sets photo to 'deleted = true' state in database
+(defn delete-image [uname name]
+  (let [userid (id-by-username uname)]
+    (sql/update photos
+      (sql/set-fields { :deleted true })
+      (sql/where { :name name :user_id userid }))))
 
 (defn delete-user [userid]
-  (with-db sql/delete-rows :users ["user_id=?" userid]))
+  (sql/delete users (sql/where {:user_id userid})))
+
 
 (defn add-comment
   "Add a comment to the database."
   [comment user-id photo-id]
   (when (not (clojure.string/blank? comment))  ;; don't post blank comments
-    (with-db
-      sql/transaction
-      (sql/insert-record :comments { :photo_id (read-string photo-id)
-                                     :user_id user-id   ;; user-id of -1 indicates anonymous comment
-                                     :comment comment
-                                     :date (to-sql-time (now)) }))))
+    (transaction
+      (sql/insert comments (sql/values { :photo_id (read-string photo-id)
+                                         :user_id user-id   ;; user-id of -1 indicates anonymous comment
+                                         :comment comment
+                                         :date (to-sql-time (now)) })))))
 
 (defn get-comments-for-photo
   "Returns a seq of all comments for a photo."
   [photo-id]
-  (with-db
-    sql/with-query-results
-    res
-    ["select * from comments where deleted = false and photo_id = ?" photo-id]
-    (doall res)))
-
+  (sql/select comments
+    (sql/where {:photo_id photo-id :deleted false})))

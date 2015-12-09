@@ -22,12 +22,12 @@
 
     {% for row in galrow.galrow %}
 
-        <div class="column">
-            <a href="{{context}}/album/{{row.row.uname}}">
-                <img class="thumbnail" src="{{context}}/img/{{row.row.uname}}/{{row.row.thumb_name}}"> <br/>
-            </a>
-            <h6>{{row.row.uname}}</h6>
-        </div>
+    <div class="column">
+        <a href="{{context}}/album/{{row.row.uname}}">
+            <img class="thumbnail" src="{{context}}/img/{{row.row.uname}}/{{row.row.thumb_name}}"> <br/>
+        </a>
+        <h6>{{row.row.uname}}</h6>
+    </div>
 
     {% endfor %}
 

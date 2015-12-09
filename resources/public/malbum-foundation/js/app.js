@@ -1,1 +1,4 @@
-$(document).foundation();
+//$(document).foundation();
+jQuery(document).ready(function($) {
+    $(document).foundation();
+});
