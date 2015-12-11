@@ -98,13 +98,19 @@
     (sql/select photos
       (sql/where {:name image-name}))))
 
-;; TODO: make function query return last row instead of first
-;; grab the first image from each user's gallery to use as a preview
+;; grab the latest image from each user's gallery to use as a preview
 (defn get-album-previews []
   (sql/exec-raw
-    ["select * from
-      (select *, row_number() over (partition by user_id) as row_number from photos)
-      as rows where row_number = 1 and deleted = false" []]
+    ["with all_data as (
+        select
+          *, max (upload_date) over (partition by user_id) as max_date
+        from photos
+        where deleted = false
+      )
+      select *
+      from all_data
+      where
+        upload_date = max_date" []]
     :results))
 
 
@@ -123,15 +129,20 @@
 (defn add-comment
   "Add a comment to the database."
   [comment user-id photo-id]
-  (when (not (clojure.string/blank? comment))  ;; don't post blank comments
+  (println comment "\n" user-id "\n" photo-id)
+  (if (not (clojure.string/blank? comment))  ;; don't post blank comments
+
     (transaction
-      (sql/insert comments (sql/values { :photo_id (read-string photo-id)
+      (sql/insert comments (sql/values { :photo_id photo-id
                                          :user_id user-id   ;; user-id of -1 indicates anonymous comment
                                          :comment comment
-                                         :date (to-sql-time (now)) })))))
+                                         :date (to-sql-time (now)) })))
+    (throw
+      (Exception. "There was an error uploading the comment."))))
 
 (defn get-comments-for-photo
   "Returns a seq of all comments for a photo."
   [photo-id]
   (sql/select comments
-    (sql/where {:photo_id photo-id :deleted false})))
+    (sql/where {:photo_id photo-id :deleted false})
+    (sql/order :date :desc)))

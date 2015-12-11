@@ -1,16 +1,26 @@
 {% extends "malbum/views/templates/base.html" %}
 {% block content %}
 <div class="album">
-    <div id="errors">
-        <ul>
+    <div class="row">
+        <div id="photoview-errors-wrapper" class="callout alert" style="display: none;">
+            <ul id="photoview-errors">
 
-        </ul>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+        <div id="photoview-success-wrapper" class="callout success" style="display: none;">
+            <ul id="photoview-success">
+
+            </ul>
+        </div>
     </div>
 
     <div class="row">
         <div class="small-12 small-centered columns">
 
-            <img class="photoview-image" src="{{context}}/img/{{page-user}}/{{picture.name}}" />
+            <img id="{{picture.photo_id}}" class="photoview-image" src="{{context}}/img/{{page-user}}/{{picture.name}}" />
 
         </div>
 
@@ -62,18 +72,17 @@
     <div class="row">
         <div class="small-6 small-centered columns">
             <h5>Add comment:</h5> <br/>
-            <!-- TODO: hook these up with a clojurescript ajax call -->
-            <textarea name="new_comment"></textarea>
+            <textarea id="comment_box" name="new_comment"></textarea>
             <input type="hidden" name="photo_id" value="{{picture.photo_id}}" />
-            <input class="button" type="submit" value="Post Comment" />
+            <input id="comment_button" class="button" type="submit" value="Post Comment" />
         </div>
     </div>
 
     <!--comments-->
     <div class="row">
-        <div class="small-6 small-centered columns">
+        <div id="photo-comments" class="small-6 small-centered columns">
 
-            <h4>Comments for this photo: </h4> <br/>
+            <h4 id="photo-comments-header">Comments for this photo: </h4>
 
             {% for cmt in comments %}
 
@@ -90,4 +99,7 @@
 
     </div>
 </div>
+{% endblock %}
+{% block scripts %}
+<script src="{{context}}/js/comments.js"></script>
 {% endblock %}

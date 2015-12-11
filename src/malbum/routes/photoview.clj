@@ -14,7 +14,7 @@
         comments  (for [cmt  (db/get-comments-for-photo (pic-data :photo_id))]
                     (let [ user-id (cmt :user_id)]
                       (if (not (= (- 1) user-id))
-                        (assoc cmt :uname (db/user-by-id user-id)) ;; assoc username of comment poster
+                        (assoc cmt :uname ((db/user-by-id user-id) :uname)) ;; assoc username of comment poster
                         (assoc cmt :uname "Anonymous"))))]
     (layout/render "photoview.html"
       { :page-user uname
@@ -23,16 +23,23 @@
 
 ;; TODO: make use of 'errors' div in photoview page instead of returning str
 ;; TODO: have function check to see if 'allow anonymous comments' is true in global settings
+;; TODO: format returned date
 (defn process-comment [comment photo-id]
-  (if-let [poster-uid  ((session/get :user) :user_id)]
+  (if-let [poster-sess  (session/get :user)]   ;; checks to see if user posting comment is logged in
     (try
-      (db/add-comment comment  poster-uid (int photo-id))
+      (db/add-comment comment  (poster-sess :user_id)  (read-string photo-id))
+      (resp/json {:poster_name (db/username-by-id (poster-sess :user_id))
+                  :status "ok"
+                  :time (db/now)})  ;; success result
       (catch Exception ex
-        (do (println ex) (str ex))))
+        (resp/json {:poster_name (db/username-by-id (poster-sess :user_id)) :status (str ex)})))  ;; failure result
     (try
-      (db/add-comment comment (- 1) photo-id)
+      (db/add-comment comment (- 1) (read-string photo-id))             ;; if user isn't logged in, it's an anonymous comment
+      (resp/json {:poster_name "Anonymous"
+                  :status "ok"
+                  :time (db/now)})
       (catch Exception ex
-        (do (println ex) (str ex))))))
+        (resp/json {:poster_name "Anonymous" :status ex})))))
 
 (defroutes photoview-routes
   (GET "/:uname/detail/:photoname" [uname photoname]
