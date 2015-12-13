@@ -16,13 +16,9 @@
 
 (sql/defentity comments)
 (sql/defentity photos)
-(sql/defentity role_rules)
-(sql/defentity roles)
-(sql/defentity rules)
+(sql/defentity admins)
 (sql/defentity settings)
-(sql/defentity user_roles)
 (sql/defentity users)
-(sql/defentity users_allowed_upload)
 
 (defn now [] (new java.util.Date))
 
@@ -146,3 +142,50 @@
   (sql/select comments
     (sql/where {:photo_id photo-id :deleted false})
     (sql/order :date :desc)))
+
+
+(defn latest-images
+  "Returns the last n images added to the server."
+  [n]
+  (for [photo (sql/select photos
+                (sql/where {:deleted false})
+                (sql/order :upload_date :desc)
+                (sql/limit n))]
+    (assoc photo :uname (username-by-id (photo :user_id))))) ;; add usernames to returned result
+
+(defn is-admin?
+  "Checks to see if a given user is an admin."
+  [userid]
+  (let [id-seq  (for [rec (sql/select admins)]
+                  (let [id (rec :user_id)]
+                    id))]
+    (not (nil? (some #(= userid %) id-seq)))))
+
+
+;; the following help determine if various global site settings are set
+
+(defn site-name
+  "Returns the name of the site."
+  []
+  ((first (sql/select settings)) :site_name))
+
+(defn is-super-user?
+  "Checks to see if the current user is the site's super user."
+  [userid]
+  (let [suid ((first (sql/select settings)) :super_user_id)]
+    (= userid suid)))
+
+(defn uploads-allowed?
+  "Checks to see if uploads are allowed to the site at all."
+  []
+  ((first (sql/select settings)) :allow_uploads))
+
+(defn site-public?
+  "Checks to see if the site is public."
+  []
+  ((first (sql/select settings)) :site_public))
+
+(defn anon-comments?
+  "Checks to see if anonymous comments are allowed."
+  []
+  ((first (sql/select settings)) :anon_comments))

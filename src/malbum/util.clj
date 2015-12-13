@@ -1,6 +1,7 @@
 (ns malbum.util
   (:require [noir.session :as session]
-            [hiccup.util :refer [url-encode]])
+            [hiccup.util :refer [url-encode]]
+            [malbum.models.db :as db])
   (:import java.io.File))
 
 

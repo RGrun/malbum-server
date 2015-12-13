@@ -6,18 +6,16 @@
 
 ;; TODO: turn the home page into a "latest images descending" page
 
-(defn fetch-previews []
-  (let [previews (db/get-album-previews)
-        rows (partition-all 4 previews)
-        rows-construct (for [x rows]
-                         { :galrow (for [y x]
-                                     {:row (assoc y :uname (db/username-by-id (y :user_id)))})})]
-   {:galleries rows-construct }
-    ))
+
+(defn fetch-latest
+  "Grabs the latest ten images uploaded to the server."
+  []
+  (let [photos (db/latest-images 10)]  ;; grab ten latest images
+    { :pictures photos }))
 
 (defn home []
-  (let [galleries (fetch-previews)]
-  (layout/render "home.html" galleries)))
+  (let [photos (fetch-latest)]
+   (layout/render "home.html" photos)))
 
 
 (defroutes home-routes

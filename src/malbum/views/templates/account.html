@@ -3,6 +3,7 @@
 
 <div class="row">
     <div class="small-12 small-centered columns">
+        <h4>Account options:</h4>
         <ul>
             <li><a href="/manage">Manage your photos</a></li>
             <li><a href="/delete-account">Delete Account</a></li>
@@ -10,6 +11,18 @@
     </div>
 
 </div>
+
+{% if admin %}
+<div class="row">
+    <div class="small-12 small-centered columns">
+        <h4>Admin options:</h4>
+        <ul>
+            <li><a href="/manage-user-photos">Manage another's photos</a></li>
+        </ul>
+    </div>
+
+</div>
+{% endif %}
 
 
 {% endblock %}

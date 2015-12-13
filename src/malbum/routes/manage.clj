@@ -8,7 +8,10 @@
 
 (defn account-page []
   (layout/render "account.html"
-  {}))
+    (if (db/is-admin? ((session/get :user) :user_id))
+      {:admin true}
+      {}
+      )))
 
 (defn manage-page []
   (layout/render "manage.html"
