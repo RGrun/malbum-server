@@ -3,6 +3,7 @@
             [malbum.views.layout :as layout]
             [malbum.models.db :as db]
             [noir.util.route :refer [restricted]]
+            [noir.response :as resp]
             [noir.session :as session]))
 
 
@@ -17,9 +18,23 @@
   (layout/render "manage.html"
     {:photos (db/images-by-user-name ((session/get :user ) :uname))}))
 
+(defn manage-user-photos-page []
+  (layout/render "manage-user-photos.html"
+    {:users (db/list-users)}))
+
+
+(defn get-users-photos [userId]
+  (let [photos (db/images-by-user-name (db/username-by-id (read-string userId)))]
+    ;(println photos)
+    (resp/json photos)))
+
 
 (defroutes manage-routes
   (GET "/account" []
     (restricted (account-page)))
   (GET "/manage" []
-    (restricted (manage-page))))
+    (restricted (manage-page)))
+  (GET "/manage-user-photos" []
+    (restricted (manage-user-photos-page)))
+  (POST "/photos-for-user" [userId]
+    (restricted (get-users-photos userId))))

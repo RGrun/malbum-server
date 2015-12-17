@@ -1,0 +1,65 @@
+{% extends "malbum/views/templates/base.html" %}
+{% block content %}
+<div class="row">
+    <div id="manage-errors-wrapper" class="callout alert" style="display: none;">
+        <ul id="manage-errors">
+
+        </ul>
+    </div>
+</div>
+
+<div class="row">
+    <div id="manage-success-wrapper" class="callout success" style="display: none;">
+        <ul id="manage-success">
+
+        </ul>
+    </div>
+</div>
+
+<div class="row">
+    <div class="small-12 small-centered columns">
+        <h5>Select a user:</h5>
+        <select id="user-select">
+            <option value="-1">Select User</option>
+            {% for usr in users %}
+
+            <option value="{{usr.user_id}}">{{usr.uname}}</option>
+
+            {% endfor %}
+        </select>
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="small-12 small-centered columns">
+        <table class="management-table">
+            <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>File Name</th>
+                <th>Upload Date</th>
+                <th>Delete?</th>
+            </tr>
+            </thead>
+            <tbody id="table-body">
+
+            <!-- Table rows to be inserted after Ajax call -->
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row">
+    <div class="small-12 small-centered columns">
+        <input class="button" id="delete" type="button" value="Delete selected images" />
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{context}}/js/manage-user-photos.js"></script>
+{% endblock %}

@@ -89,12 +89,35 @@
       (for [pname names] {:name pname :status (delete-image uname pname)})))) ;; return JSON responses
 
 
+;; delete images in database
+(defn management-delete-image [uname pname]
+  (try
+    (db/delete-image uname pname)
+    (io/delete-file (str "albums" File/separator uname File/separator pname))
+    (io/delete-file (str "albums" File/separator uname  File/separator thumb-prefix pname))
+    "ok"
+    (catch Exception ex
+      ;(error ex "Error occurred while deleting: " name)
+      (.getMessage ex))))
+
+(defn management-delete-images
+  "For deleting images from the admin management screen."
+  [userid names]
+  (let [uname (db/username-by-id (read-string userid))]
+    (println uname "+" names)
+    (resp/json
+      (for [pname names] {:name pname :status (management-delete-image uname pname)}))))
+
+
+
+
 ;; routes for handler.clj
 (defroutes upload-routes
   (GET "/img/:uname/:file-name" [uname file-name]
     (serve-file uname file-name))
   (GET "/upload" [info] (restricted (upload-page {:info info})))
   (POST "/upload" [custom_name file description] (restricted (handle-upload custom_name file description)))
+  (POST "/management-delete" [userid names] (restricted (management-delete-images userid names)))
   (POST "/delete" [names] (restricted (delete-images names)))
 
   ;; api call to send local file to server with curl:

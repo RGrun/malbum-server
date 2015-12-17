@@ -19,41 +19,6 @@
 ;      [:api_key "text NOT NULL"])))
 ;
 ;
-;(defn create-roles-table
-;  "Roles describe user roles, eg: 'admin', 'editor' etc..."
-;  []
-;  (sql/with-connection db
-;    (sql/create-table
-;      :roles
-;      [:role_id "serial PRIMARY KEY"]
-;      [:role_name "text NOT NULL"])))
-;
-;(defn create-rules-table
-;  "Rules describe things roles can do, like permissions."
-;  []
-;  (sql/with-connection db
-;    (sql/create-table
-;      :rules
-;      [:rule_id "serial PRIMARY KEY"]
-;      [:rule_name "text NOT NULL"])))
-;
-;(defn create-user-roles-table
-;  "User to roles mapping"
-;  []
-;  (sql/with-connection db
-;    (sql/create-table
-;      :user_roles
-;      [:user_id "int NOT NULL REFERENCES users (user_id) ON DELETE CASCADE"]
-;      [:role_id "int NOT NULL REFERENCES roles (role_id) ON DELETE CASCADE"])))
-;
-;(defn create-role-rules-table
-;  "Roles to rules mapping"
-;  []
-;  (sql/with-connection db
-;    (sql/create-table
-;      :role_rules
-;      [:role_id "int NOT NULL REFERENCES roles (role_id) ON DELETE CASCADE"]
-;      [:rule_id "int NOT NULL REFERENCES rules (rule_id) ON DELETE CASCADE"])))
 ;
 ;(defn create-photos-table
 ;  "Photos table holds photo information"
@@ -98,24 +63,11 @@
 ;      [:site_public "bool DEFAULT false"]
 ;      [:anon_comments "bool DEFAULT false"])))
 ;
-;(defn create-users-allowed-upload-table
-;  "Users still allowed to upload photos when 'allowuploads' setting is false"
-;  []
-;  (sql/with-connection db
-;    (sql/create-table
-;      :users_allowed_upload
-;      [:user_id "int NOT NULL REFERENCES users (user_id) ON DELETE CASCADE"])))
-;
 ;(defn setup-database-tables
 ;  "Bootstrap the database"
 ;  []
 ;  (do
 ;    (create-users-table)
-;    (create-roles-table)
-;    (create-rules-table)
-;    (create-user-roles-table)
-;    (create-role-rules-table)
 ;    (create-photos-table)
 ;    (create-comments-table)
-;    (create-site-settings-table)
-;    (create-users-allowed-upload-table)))
+;    (create-site-settings-table)))

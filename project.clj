@@ -13,12 +13,12 @@
                  [prone "0.8.2"] ;; WAAAAY better error reporting
                  [selmer "0.5.4"] ;; HTML templating using template files
                  [clj-time "0.11.0"]
-                 [org.clojure/tools.reader "0.7.10"] ;; clojurescript
                  [org.clojure/clojurescript "0.0-1806"]
-
-                 ;; clojurescript dependancies
-                 [domina "1.0.0"]
-                 [cljs-ajax "0.2.0"]
+                 [log4j "1.2.15"   ;; logging
+                  :exclusions [javax.mail/mail
+                               javax.jms/jms
+                               com.sun.jdmk/jmxtools
+                               com.sun.jmx/jmxri]]
                  ]
   :plugins [[lein-ring "0.8.12"]
             [lein-cljsbuild "0.3.2"]]

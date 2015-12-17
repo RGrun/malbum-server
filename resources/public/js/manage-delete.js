@@ -23,7 +23,7 @@ function deleteImages() {
                     $(element).parent().parent().remove();
                     $("#manage-success-wrapper").css("display", "block");
                     $("#manage-success").append(
-                    $('<li>', {html: "Successfully deleted photos."}));
+                        $('<li>', {html: "Successfully deleted photos."}));
                     console.log("Successfully deleted images.");
                 } else {
                      $("#manage-errors-wrapper").css("display",  "block");

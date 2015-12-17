@@ -9,8 +9,8 @@
 (def db
   {:subprotocol "postgresql"
    :subname "//localhost/malbum"
-   :user "admin"
-   :password "admin"})
+   :user "malbum"
+   :password "malbum"})
 
 (defdb korma-db db)
 
@@ -152,6 +152,12 @@
                 (sql/order :upload_date :desc)
                 (sql/limit n))]
     (assoc photo :uname (username-by-id (photo :user_id))))) ;; add usernames to returned result
+
+(defn list-users
+  "Returns a seq of all users"
+  []
+  (for [user (sql/select users)]
+    (assoc user :uname (username-by-id (user :user_id)))))
 
 (defn is-admin?
   "Checks to see if a given user is an admin."
