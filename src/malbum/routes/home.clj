@@ -4,7 +4,6 @@
             [malbum.models.db :as db]
             [malbum.views.layout :as layout]))
 
-;; TODO: turn the home page into a "latest images descending" page
 
 
 (defn fetch-latest

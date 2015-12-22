@@ -21,7 +21,6 @@
         :comments comments
         :picture  pic-data })))
 
-;; TODO: make use of 'errors' div in photoview page instead of returning str
 ;; TODO: have function check to see if 'allow anonymous comments' is true in global settings
 ;; TODO: format returned date
 (defn process-comment [comment photo-id]
