@@ -5,7 +5,6 @@
             [noir.io :refer [upload-file resource-path]]
             [noir.session :as session]
             [noir.response :as resp]
-            [noir.util.route :refer [restricted]]
             [clojure.java.io :as io]
             [ring.util.response :refer [file-response]]
             [malbum.models.db :as db]
@@ -120,9 +119,4 @@
   (POST "/management-delete" [userid names] (restricted (management-delete-images userid names)))
   (POST "/delete" [names] (restricted (delete-images names)))
 
-  ;; api call to send local file to server with curl:
-  ;; curl -F "user=apiuser" -F "file=@/home/richard/img/pikachu_kite.jpg" localhost:3000/api/upload
-
-  ;(POST "/api/upload" [user file] (handle-api-upload user file)) ;; EXPERIMENTAL api call (works!)
-  ;(POST "/api/seefile" [file] (str file)) ;; for debugging the uploaded file map
   )

@@ -159,6 +159,11 @@
   (for [user (sql/select users)]
     (assoc user :uname (username-by-id (user :user_id)))))
 
+(defn user-from-key [key]
+  (let [user (first (sql/select users
+                      (sql/where {:api_key key})))]
+    (assoc user :uname (username-by-id (user :user_id)))))
+
 (defn is-admin?
   "Checks to see if a given user is an admin."
   [userid]

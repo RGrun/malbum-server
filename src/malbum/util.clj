@@ -24,3 +24,20 @@
 
 (defn thumb-uri [uname file-name]
   (image-uri uname (str thumb-prefix file-name)))
+
+
+;; random string generation
+
+(def random (java.util.Random.))
+
+;define characters list to use to generate string
+(def char-list
+  (map char (concat (range 48 58) (range 66 92) (range 97 123))))
+
+;generates 1 random character
+(defn random-char []
+  (nth char-list (.nextInt random (count char-list))))
+
+; generates random string of length characters
+(defn random-string [length]
+  (apply str (take length (repeatedly random-char))))

@@ -9,7 +9,7 @@
             [noir.validation :as vali]
             [noir.util.crypt :as crypt]
             [malbum.models.db :as db]
-            [malbum.util :refer [album-path]]
+            [malbum.util :refer [album-path random-string]]
             [noir.util.route :refer [restricted]]
             ;[malbum.routes.upload :refer [delete-image]]
             )
@@ -80,7 +80,7 @@
                          :fname fname
                          :lname lname
                          :pass (crypt/encrypt pwd)
-                         :api_key "PLACEHOLDER" })
+                         :api_key (random-string 100) })
         (session/put! :user (db/user-by-name uname)) ;; add user to session
         (create-album-path)   ;; create directory in album folder for new user
         (resp/redirect "/")     ;; redirect to index
