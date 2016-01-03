@@ -1,6 +1,7 @@
 (ns malbum.models.db
   (:require [korma.core :as sql]
             [korma.db :refer [defdb transaction]]
+            [noir.util.crypt :as crypt]
             [clj-time.coerce :refer [to-sql-time]])
 
   (:import [java.io File FileInputStream FileOutputStream]
@@ -171,6 +172,22 @@
                   (let [id (rec :user_id)]
                     id))]
     (not (nil? (some #(= userid %) id-seq)))))
+
+(defn api-password-valid?
+  "Checks to see if the password is valid for a mobile user."
+  [uname pwd]
+  (let [user (user-by-name uname)]
+    (crypt/compare pwd (user :pass))))
+
+(defn api-recent-thumbnails-for-user
+  "Fetches recent thumbnails for a particular user."
+  [uname]
+  (let [thumbs (sql/select photos
+                 (sql/fields [:thumb_name])
+                 (sql/where {:user_id (id-by-username uname)}))]
+    (if-not (empty? thumbs)
+      thumbs
+      '())))
 
 
 ;; the following help determine if various global site settings are set
