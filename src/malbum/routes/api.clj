@@ -76,8 +76,9 @@
   [key]
   (println key)
   (if-let [user (db/user-from-key key)] ;; valid api keys only
-    (let [thumb-seq (db/get-album-previews)]
-      (resp/json {:status "ok" :thumbs thumb-seq}))
+    (let [thumb-seq (db/get-album-previews)
+          thumbs-unames (for [x thumb-seq] (assoc x :uname (db/username-by-id (:user_id x))))]
+      (resp/json {:status "ok" :thumbs thumbs-unames}))
     (resp/json {:status "failure"})))
 
 ;; routes for handler.clj
