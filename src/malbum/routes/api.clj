@@ -71,6 +71,15 @@
       (resp/json {:status "ok" :thumbs thumbs})
       (resp/json {:status "failure"}))))
 
+(defn api-albums
+  "Returns JSON with info about most recent photo for each user."
+  [key]
+  (println key)
+  (if-let [user (db/user-from-key key)] ;; valid api keys only
+    (let [thumb-seq (db/get-album-previews)]
+      (resp/json {:status "ok" :thumbs thumb-seq}))
+    (resp/json {:status "failure"})))
+
 ;; routes for handler.clj
 (defroutes api-routes
 
@@ -80,6 +89,8 @@
   (POST "/api/login" [uname pwd] (handle-api-login uname pwd))
 
   (POST "/api/getimages" [uname] (api-get-images uname)) ;; return list of thumbnails for mobile client
+
+  (POST "/api/albums" [key] (api-albums key)) ;; get first album image for each user
 
   (POST "/api/upload" [key file] (handle-api-upload key file)) ;; EXPERIMENTAL api call (works!)
   (POST "/api/seefile" [key file] (str key " | " file)) ;; for debugging the uploaded file map
