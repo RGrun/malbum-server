@@ -81,17 +81,29 @@
       (resp/json {:status "ok" :thumbs thumbs-unames}))
     (resp/json {:status "failure"})))
 
+(defn photos-for-user
+  "Get all images relating to one user."
+  [key uname]
+  (if-let [user (db/user-from-key key)] ;; valid api keys only
+    (let [photos (db/images-by-user-name uname)]
+      (resp/json {:status "ok" :photos photos}))
+    (resp/json {:status "failure"})))
+
 ;; routes for handler.clj
 (defroutes api-routes
 
   ;; api call to send local file to server with curl:
   ;; curl -F "user=apiuser" -F "file=@/home/richard/img/pikachu_kite.jpg" localhost:3000/api/upload
 
+  ;; TODO: rewrite some post calls as get calls
+
   (POST "/api/login" [uname pwd] (handle-api-login uname pwd))
 
   (POST "/api/getimages" [uname] (api-get-images uname)) ;; return list of thumbnails for mobile client
 
   (POST "/api/albums" [key] (api-albums key)) ;; get first album image for each user
+
+  (POST "/api/photos-for-user/:uname" [key uname] (photos-for-user key uname)) ;; get images relating to one user
 
   (POST "/api/upload" [key file] (handle-api-upload key file)) ;; EXPERIMENTAL api call (works!)
   (POST "/api/seefile" [key file] (str key " | " file)) ;; for debugging the uploaded file map
