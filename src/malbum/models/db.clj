@@ -44,9 +44,11 @@
 (defn username-by-id
   "Helper shortcut method."
   [userid]
-  (:uname (first (sql/select users
-           (sql/where {:user_id userid})
-           (sql/limit 1)))))
+  (if-let [username (:uname (first (sql/select users
+                                     (sql/where {:user_id userid})
+                                     (sql/limit 1))))]
+    username
+    "Anonymous"))
 
 (defn id-by-username
   "Helper shortcut method."
@@ -192,6 +194,15 @@
     (if-not (empty? thumbs)
       thumbs
       '())))
+
+(defn photo-from-id
+  "Returns a photo's information based on it's id."
+  [photo-id]
+  (let [photo (first (sql/select photos
+                (sql/where {:photo_id (read-string photo-id)})))]
+    (if-not (empty? photo)
+      (assoc photo :uname (username-by-id (:user_id photo)))
+      nil)))
 
 
 ;; the following help determine if various global site settings are set

@@ -89,6 +89,17 @@
       (resp/json {:status "ok" :photos photos}))
     (resp/json {:status "failure"})))
 
+(defn get-photo-information
+  "Returns information about a single photo."
+  [key photo-id]
+  (if-let [user (db/user-from-key key)] ;; valid api keys only
+    (let [photo (db/photo-from-id photo-id)
+          comments (db/get-comments-for-photo (read-string photo-id))
+          comments-usernames (for [x comments]
+                               (assoc x :uname (db/username-by-id (:user_id x))))]
+      (resp/json {:status "ok" :comments comments-usernames}))
+    (resp/json {:status "failure"})))
+
 ;; routes for handler.clj
 (defroutes api-routes
 
@@ -104,6 +115,8 @@
   (POST "/api/albums" [key] (api-albums key)) ;; get first album image for each user
 
   (POST "/api/photos-for-user/:uname" [key uname] (photos-for-user key uname)) ;; get images relating to one user
+
+  (GET "/api/photo-information" [key photo-id] (get-photo-information key photo-id))
 
   (POST "/api/upload" [key file] (handle-api-upload key file)) ;; EXPERIMENTAL api call (works!)
   (POST "/api/seefile" [key file] (str key " | " file)) ;; for debugging the uploaded file map
