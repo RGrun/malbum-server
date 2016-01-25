@@ -97,7 +97,20 @@
           comments (db/get-comments-for-photo (read-string photo-id))
           comments-usernames (for [x comments]
                                (assoc x :uname (db/username-by-id (:user_id x))))]
-      (resp/json {:status "ok" :comments comments-usernames}))
+      (resp/json {:status "ok" :photo photo :comments comments-usernames}))
+    (resp/json {:status "failure"})))
+
+(defn new-comment
+  "Accept and save a new comment from mobile clients."
+  [key photo-id comment]
+  (if-let [user (db/user-from-key key)] ;; valid api keys only
+    (try
+      (do
+        (db/add-comment comment (:user_id user) (read-string photo-id))
+        (resp/json {:status "ok"}))
+
+      (catch Exception ex
+        (resp/json {:status "failure"})))
     (resp/json {:status "failure"})))
 
 ;; routes for handler.clj
@@ -116,7 +129,9 @@
 
   (POST "/api/photos-for-user/:uname" [key uname] (photos-for-user key uname)) ;; get images relating to one user
 
-  (GET "/api/photo-information" [key photo-id] (get-photo-information key photo-id))
+  (GET "/api/photo-information" [key photo_id] (get-photo-information key photo_id))
+
+  (POST "/api/new-comment" [key photo_id comment] (new-comment key photo_id comment)) ;; new comment mechanism
 
   (POST "/api/upload" [key file] (handle-api-upload key file)) ;; EXPERIMENTAL api call (works!)
   (POST "/api/seefile" [key file] (str key " | " file)) ;; for debugging the uploaded file map
