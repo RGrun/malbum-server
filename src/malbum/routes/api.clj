@@ -113,6 +113,15 @@
         (resp/json {:status "failure"})))
     (resp/json {:status "failure"})))
 
+(defn get-latest-images
+  "Returns the latest n photos."
+  [key start end]
+  (if-let [user (db/user-from-key key)] ;; valid api keys only
+    (let [photo-seq (db/latest-images start end)
+          count (count photo-seq)]
+      (resp/json {:status "ok" :photos photo-seq :count count}))
+    (resp/json {:status "failure"})))
+
 ;; routes for handler.clj
 (defroutes api-routes
 
@@ -130,6 +139,8 @@
   (POST "/api/photos-for-user/:uname" [key uname] (photos-for-user key uname)) ;; get images relating to one user
 
   (GET "/api/photo-information" [key photo_id] (get-photo-information key photo_id))
+
+  (GET "/api/latest-images" [key start end] (get-latest-images key start end))
 
   (POST "/api/new-comment" [key photo_id comment] (new-comment key photo_id comment)) ;; new comment mechanism
 

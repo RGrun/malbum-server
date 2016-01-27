@@ -149,12 +149,15 @@
 
 (defn latest-images
   "Returns the last n images added to the server."
-  [n]
-  (for [photo (sql/select photos
-                (sql/where {:deleted false})
-                (sql/order :upload_date :desc)
-                (sql/limit n))]
-    (assoc photo :uname (username-by-id (photo :user_id))))) ;; add usernames to returned result
+  ([end]
+    (latest-images 0 end))
+  ([start end]
+    (for [photo (sql/select photos
+                  (sql/where {:deleted false})
+                  (sql/order :upload_date :desc)
+                  (sql/offset start)
+                  (sql/limit end))]
+      (assoc photo :uname (username-by-id (photo :user_id)))))) ;; add usernames to returned result
 
 (defn list-users
   "Returns a seq of all users"
