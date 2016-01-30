@@ -118,8 +118,12 @@
   [key start end]
   (if-let [user (db/user-from-key key)] ;; valid api keys only
     (let [photo-seq (db/latest-images start end)
+          photo-seq-clean (for [x photo-seq]
+                            (if (nil? (:custom_name x))
+                              (assoc x :custom_name (:name x))
+                              x))
           count (count photo-seq)]
-      (resp/json {:status "ok" :photos photo-seq :count count}))
+      (resp/json {:status "ok" :photos photo-seq-clean :count (str count)}))
     (resp/json {:status "failure"})))
 
 ;; routes for handler.clj
