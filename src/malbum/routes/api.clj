@@ -132,15 +132,14 @@
   ;; api call to send local file to server with curl:
   ;; curl -F "user=apiuser" -F "file=@/home/richard/img/pikachu_kite.jpg" localhost:3000/api/upload
 
-  ;; TODO: rewrite some post calls as get calls
-
   (POST "/api/login" [uname pwd] (handle-api-login uname pwd))
 
-  (POST "/api/getimages" [uname] (api-get-images uname)) ;; return list of thumbnails for mobile client
+  ;; TODO: remove?
+  ;(POST "/api/getimages" [uname] (api-get-images uname)) ;; return list of thumbnails for mobile client
 
-  (POST "/api/albums" [key] (api-albums key)) ;; get first album image for each user
+  (GET "/api/albums" [key] (api-albums key)) ;; get first album image for each user
 
-  (POST "/api/photos-for-user/:uname" [key uname] (photos-for-user key uname)) ;; get images relating to one user
+  (GET "/api/photos-for-user/:uname" [key uname] (photos-for-user key uname)) ;; get images relating to one user
 
   (GET "/api/photo-information" [key photo_id] (get-photo-information key photo_id))
 
