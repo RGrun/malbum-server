@@ -28,12 +28,17 @@
       (File. (str path thumb-prefix filename)))))
 
 
-;; TODO: when app is complete, modify to accept custom file data
 (defn handle-api-upload
   "Handles image uploads from mobile clients."
-  [api-key {:keys [filename] :as file}]
+  [api-key {:keys [filename] :as file} name descrip]
+  (println "Photo upload commencing...")
+  (println (str "Key: " api-key))
+  (println (str "File: " file))
+  (println (str "Name: " name))
+  (println (str "Desc: " descrip))
   (let [user (db/user-from-key api-key)
-        uname (user :uname)]
+        uname (user :uname)
+        file (update-in file [:filename] #(clojure.string/replace % #" " "_"))]
     (if (empty? filename)
       (str "File upload filed. Your user: " uname ". Map : " file)
       (try
@@ -41,12 +46,16 @@
         ;; save the file and create thumbnail
         (upload-file (album-path-api uname) file)
         (save-thumbnail-api uname file)
-        (db/add-image (user :user_id) (album-path-api uname) filename filename "Api upload") ;; this will need to be modified here
+        (db/add-image (user :user_id)
+          (album-path-api uname)
+          (clojure.string/replace filename #" " "_") ;; replace spaces with underscores
+          name
+          descrip)
 
         ;; return confirmation message
-        (str "File upload complete")
+        (resp/json {:status "ok"})
         (catch Exception ex
-          (str "error occurred during upload: " (.getMessage ex)))))
+          (resp/json {:status "failure" :error (.getMessage ex)} ))))
 
   ))
 
@@ -134,8 +143,6 @@
 
   (POST "/api/login" [uname pwd] (handle-api-login uname pwd))
 
-  ;; TODO: remove?
-  ;(POST "/api/getimages" [uname] (api-get-images uname)) ;; return list of thumbnails for mobile client
 
   (GET "/api/albums" [key] (api-albums key)) ;; get first album image for each user
 
@@ -147,6 +154,6 @@
 
   (POST "/api/new-comment" [key photo_id comment] (new-comment key photo_id comment)) ;; new comment mechanism
 
-  (POST "/api/upload" [key file] (handle-api-upload key file)) ;; EXPERIMENTAL api call (works!)
+  (POST "/api/upload" [file key cname cdescrip] (handle-api-upload key file cname cdescrip))
   (POST "/api/seefile" [key file] (str key " | " file)) ;; for debugging the uploaded file map
   )
