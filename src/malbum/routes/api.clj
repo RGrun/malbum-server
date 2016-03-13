@@ -122,6 +122,8 @@
         (resp/json {:status "failure"})))
     (resp/json {:status "failure"})))
 
+(def formatter (java.text.SimpleDateFormat. "hh:mm a 'on' EEE, MMM d, ''yy"))
+
 (defn get-latest-images
   "Returns the latest n photos."
   [key start end]
@@ -131,8 +133,13 @@
                             (if (nil? (:custom_name x))
                               (assoc x :custom_name (:name x))
                               x))
+          photo-seq-clean-dates (for [x photo-seq]
+                                  (let [formatted-date (.format formatter (x :upload_date))]
+                                                         (assoc x :upload-date formatted-date)
+
+                                  ))
           count (count photo-seq)]
-      (resp/json {:status "ok" :photos photo-seq-clean :count (str count)}))
+      (resp/json {:status "ok" :photos photo-seq-clean-dates :count (str count)}))
     (resp/json {:status "failure"})))
 
 ;; routes for handler.clj
