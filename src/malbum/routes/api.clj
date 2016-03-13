@@ -133,7 +133,7 @@
                             (if (nil? (:custom_name x))
                               (assoc x :custom_name (:name x))
                               x))
-          photo-seq-clean-dates (for [x photo-seq]
+          photo-seq-clean-dates (for [x photo-seq-clean]
                                   (let [formatted-date (.format formatter (x :upload_date))]
                                                          (assoc x :upload-date formatted-date)
 
