@@ -1,33 +1,27 @@
 # malbum-server
 
-## TODO:
+This is the server component to malbum. It's written in Clojure and uses
+a RESTful interface to communicate with [an Android client](https://github.com/RGrun/malbum-android)
+I wrote. The server and client communicate using JSON.
 
-* Add "Description" column to photos table
-* Allow description to be entered during photo upload
+Malbum is a bit like a private Instagram. It organizes photos uploaded to it
+into albums for each user account, and presents an administration interface for management.
 
-* see internal TODS throughout project for now
+You can learn more about malbum at the page concerning it on my personal website:
+http://furu.guru/projects/malbum.
+
+It should be up and running here: http://malbum.furu.guru.
+
 
 ## Prerequisites
 
 You will need [Leiningen][1] 1.7.0 or above installed.
 
-More instructions on installing and configuring foundation will come soon.
-
-Then, you'll also need to install [Foundation 6][2]'s build tool and run
-`foundation watch` to compile the scss before running the server.
-
-Instructions on setting up the Postgres database will come soon.
-
-[1]: https://github.com/technomancy/leiningen
-[2]: http://foundation.zurb.com/sites/docs/installation.html#command-line-tool.html
 
 ## Running
 
 To start a web server for the application, run:
 
     lein ring server
-
-## License
-
 
 

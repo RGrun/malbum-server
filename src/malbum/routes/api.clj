@@ -122,8 +122,6 @@
         (resp/json {:status "failure"})))
     (resp/json {:status "failure"})))
 
-(def formatter (java.text.SimpleDateFormat. "hh:mm a 'on' EEE, MMM d, ''yy"))
-
 (defn get-latest-images
   "Returns the latest n photos."
   [key start end]
